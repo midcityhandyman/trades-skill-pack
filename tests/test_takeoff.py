@@ -58,6 +58,8 @@ def test_trim_sticks():
     lambda: takeoff.paint_gallons(100, coats=1.5),
     lambda: takeoff.trim_sticks(10, stick_ft=0),
     lambda: takeoff.wall_area("8", 5, 8),
+    lambda: takeoff.drywall_sheets(float("inf")),
+    lambda: takeoff.wall_area(float("nan"), 5, 8),
 ])
 def test_bad_input_raises(call):
     with pytest.raises(ValueError):
@@ -94,4 +96,10 @@ def test_cli_table_and_error(tmp_path, capsys):
     assert "Drywall sheets 4x8" in out and "Sample material total: $384.00" in out
     bad = tmp_path / "bad.json"
     bad.write_text('{"length_ft": 8}', encoding="utf-8")
+    assert takeoff.main([str(bad)]) == 2
+
+
+def test_cli_rejects_infinity_without_a_traceback(tmp_path):
+    bad = tmp_path / "inf.json"
+    bad.write_text('{"length_ft": Infinity, "width_ft": 5, "height_ft": 8, "drywall": {}}', encoding="utf-8")
     assert takeoff.main([str(bad)]) == 2

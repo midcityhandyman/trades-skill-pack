@@ -26,20 +26,28 @@ VAGUE_PHRASES = [
     r"\bas needed\b", r"\bas required\b", r"\betc\b\.?", r"\btbd\b", r"\bto be determined\b",
     r"\bmiscellaneous\b", r"\bmisc\b\.?", r"\bstandard grade\b", r"\band so on\b", r"\bif necessary\b",
 ]
-HEADING = re.compile(r"^#{1,6}\s+(.*?)\s*#*\s*$")
+HEADING = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
 BULLET = re.compile(r"^\s*(?:[-*+]|\d+[.)])\s+")
 MONEY = re.compile(r"\$\s?\d")
 PERCENT = re.compile(r"(\d+(?:\.\d+)?)\s*%")
 
 
 def split_sections(text: str) -> dict[str, list[tuple[int, str]]]:
-    """Map lower-cased heading text to its (line number, line) body rows."""
+    """Map lower-cased heading text to its (line number, line) body rows.
+
+    A deeper subheading inside a required section (for example "### Demolition"
+    under "## Inclusions") is kept as a body row of that section, so its bullets
+    are still checked and the parent is not reported as empty.
+    """
     sections: dict[str, list[tuple[int, str]]] = {}
-    current = None
+    current, depth = None, 0
     for number, line in enumerate(text.splitlines(), start=1):
         match = HEADING.match(line)
-        if match:
-            current = match.group(1).strip().lower()
+        name = match.group(2).strip().lower() if match else None
+        nested = (match and current in REQUIRED_SECTIONS and len(match.group(1)) > depth
+                  and name not in REQUIRED_SECTIONS)
+        if match and not nested:
+            current, depth = name, len(match.group(1))
             sections.setdefault(current, [])
         elif current is not None:
             sections[current].append((number, line))

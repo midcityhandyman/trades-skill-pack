@@ -73,7 +73,8 @@ def compute(change: dict) -> dict:
         })
 
     subtotal = nets["material"] + nets["labor"]
-    markup = money(subtotal * _pct("markup_pct", change.get("markup_pct", 0))) if subtotal > 0 else ZERO
+    markup_rate = _pct("markup_pct", change.get("markup_pct", 0))
+    markup = money(subtotal * markup_rate) if subtotal > 0 else ZERO
     tax_rate = _pct("material_tax_pct", change.get("material_tax_pct", 0))
     tax = money(nets["material"] * tax_rate) if nets["material"] > 0 else ZERO
     total = money(subtotal + markup + tax)
@@ -122,7 +123,8 @@ def render_markdown(result: dict) -> str:
         "|---|---|---|---|---|---|---|---|",
     ]
     for number, line in enumerate(result["lines"], start=1):
-        out.append(f"| {number} | {line['description']} | {line['type']} | {line['category']} | "
+        description = str(line["description"]).replace("|", "/")
+        out.append(f"| {number} | {description} | {line['type']} | {line['category']} | "
                    f"{line['quantity']} | {line['unit']} | {_usd(line['unit_price'])} | {_usd(line['extended'])} |")
     out += [
         "",

@@ -37,6 +37,8 @@ def _ceil(value: float) -> int:
 def _check(name: str, value: float, allow_zero: bool = True) -> float:
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise ValueError(f"{name} must be a number")
+    if not math.isfinite(value):
+        raise ValueError(f"{name} must be a finite number")
     if value < 0 or (value == 0 and not allow_zero):
         raise ValueError(f"{name} must be {'zero or more' if allow_zero else 'greater than zero'}")
     return float(value)

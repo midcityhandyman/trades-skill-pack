@@ -54,3 +54,13 @@ def test_cli_exit_codes(capsys, tmp_path):
     assert scope_lint.main([str(EXAMPLES / "flawed_scope.md")]) == 1
     assert "error(s)" in capsys.readouterr().out
     assert scope_lint.main([str(tmp_path / "missing.md")]) == 2
+
+
+def test_subheadings_stay_inside_their_section():
+    text = (EXAMPLES / "sample_scope.md").read_text(encoding="utf-8")
+    nested = text.replace("## Inclusions\n", "## Inclusions\n### Finishes\n")
+    assert scope_lint.lint(nested) == []
+    nested = text.replace("## Allowances\n", "## Allowances\n### Fixtures\n- Mirror: owner to choose\n")
+    assert codes(scope_lint.lint(nested)) == ["allowance-no-amount"]
+    nested = text.replace("- At completion walk through: 30%", "### Final\n- At completion walk through: 20%")
+    assert codes(scope_lint.lint(nested)) == ["payment-sum"]

@@ -86,3 +86,18 @@ def test_cli(tmp_path, capsys):
     assert change_order.main([str(SAMPLE)]) == 0
     assert json.loads(capsys.readouterr().out)["change_total"] == "544.50"
     assert change_order.main([str(tmp_path / "missing.json")]) == 2
+
+
+def test_bad_markup_is_rejected_even_on_a_net_credit(sample):
+    sample["items"] = [{"description": "Delete towel bar", "type": "credit", "category": "material",
+                        "quantity": 1, "unit_price": "25.00"}]
+    sample["markup_pct"] = 150
+    with pytest.raises(ValueError):
+        change_order.compute(sample)
+
+
+def test_pipe_in_description_does_not_break_the_table(sample):
+    sample["items"][0]["description"] = "Plywood 3/4 in | sink base"
+    text = change_order.render_markdown(change_order.compute(sample))
+    row = next(line for line in text.splitlines() if line.startswith("| 1 |"))
+    assert row.count("|") == 9 and "Plywood 3/4 in / sink base" in row
