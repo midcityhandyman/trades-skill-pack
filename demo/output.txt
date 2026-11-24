@@ -1,0 +1,79 @@
+trades-skill-pack demo. ALL PRICES AND QUANTITIES ARE SAMPLE VALUES.
+
+=== 1. Validate skill format ===
+$ python tools/validate_skills.py
+OK 3 skill(s) pass the format checks
+[exit code 0]
+
+=== 2. material-takeoff: sample hall bath ===
+$ python skills/material-takeoff/scripts/takeoff.py skills/material-takeoff/examples/sample_room.json --table
+Takeoff: SAMPLE hall bath (invented dimensions)
+SAMPLE VALUES ONLY. Waste factors, coverage and prices are illustrative defaults.
+
+Item                                       Net  Waste  Order Unit
+Drywall sheets 4x8                  225.32 sqft    10%      8 sheet  (sample $120.00)
+Tile 12x24 in, straight lay            40 sqft    10%      3 box  (sample $144.00)
+Paint, 2 coat(s)                    225.32 sqft     5%      2 gallon  (sample $76.00)
+Baseboard, 16 ft sticks                23.5 lf    10%      2 stick  (sample $44.00)
+
+Sample material total: $384.00 (not a quote)
+[exit code 0]
+
+=== 3. change-order-writer: sample concealed condition ===
+$ python skills/change-order-writer/scripts/change_order.py skills/change-order-writer/examples/sample.json --markdown
+# Change Order 2: SAMPLE kitchen refresh (invented job)
+
+> SAMPLE VALUES ONLY. Every price and quantity here is illustrative.
+
+## Reason for change
+Concealed condition. Water damaged subfloor found under the old sink base after demolition. Amends scope section Inclusions, flooring.
+
+## Items
+| # | Description | Type | Category | Qty | Unit | Unit price | Extended |
+|---|---|---|---|---|---|---|---|
+| 1 | Replace subfloor at sink base, 3/4 in plywood | add | material | 2 | sheet | $55.00 | $110.00 |
+| 2 | Remove damaged subfloor and install new | add | labor | 6 | hr | $70.00 | $420.00 |
+| 3 | Delete floor patch compound from original scope | credit | material | 1 | ea | $60.00 | -$60.00 |
+
+## Price
+- Net material: $50.00
+- Net labor: $420.00
+- Markup: $70.50
+- Material tax: $4.00
+- **This change order: $544.50**
+
+## Contract sum
+- Original contract sum: $18,500.00
+- Prior approved changes: $450.00
+- **Revised contract sum: $19,494.50**
+
+## Schedule
+Adds 1 working day(s).
+
+## Approval
+Work in this change order starts only after both parties sign.
+
+Owner: ____________________  Date: __________
+
+Contractor: ____________________  Date: __________
+[exit code 0]
+
+=== 4. scope-of-work-writer: lint a clean sample scope ===
+$ python skills/scope-of-work-writer/scripts/scope_lint.py skills/scope-of-work-writer/examples/sample_scope.md
+scope lint: clean, 0 findings
+[exit code 0]
+
+=== 5. scope-of-work-writer: lint a deliberately flawed draft (exit code 1 expected) ===
+$ python skills/scope-of-work-writer/scripts/scope_lint.py skills/scope-of-work-writer/examples/flawed_scope.md
+ERROR   missing-section       Missing required section: Exclusions
+ERROR   missing-section       Missing required section: Assumptions
+ERROR   missing-section       Missing required section: Change Process
+WARNING vague-phrase          line 9: Vague phrase 'as needed': say exactly what is included
+WARNING vague-phrase          line 10: Vague phrase 'etc.': say exactly what is included
+WARNING vague-phrase          line 11: Vague phrase 'TBD': say exactly what is included
+ERROR   allowance-no-amount   line 14: Allowance has no dollar amount
+ERROR   payment-sum           Payment schedule adds up to 90%, not 100%
+scope lint: 5 error(s), 3 warning(s)
+[exit code 1]
+
+Demo finished: all steps behaved as expected.

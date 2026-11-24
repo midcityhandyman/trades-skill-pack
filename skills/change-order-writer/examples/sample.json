@@ -1,0 +1,15 @@
+{
+  "change_order_number": 2,
+  "project_label": "SAMPLE kitchen refresh (invented job)",
+  "reason": "Concealed condition. Water damaged subfloor found under the old sink base after demolition. Amends scope section Inclusions, flooring.",
+  "original_contract_sum": "18500.00",
+  "prior_approved_changes": "450.00",
+  "markup_pct": 15,
+  "material_tax_pct": 8,
+  "schedule_days": 1,
+  "items": [
+    {"description": "Replace subfloor at sink base, 3/4 in plywood", "type": "add", "category": "material", "quantity": 2, "unit": "sheet", "unit_price": "55.00"},
+    {"description": "Remove damaged subfloor and install new", "type": "add", "category": "labor", "quantity": 6, "unit": "hr", "unit_price": "70.00"},
+    {"description": "Delete floor patch compound from original scope", "type": "credit", "category": "material", "quantity": 1, "unit": "ea", "unit_price": "60.00"}
+  ]
+}

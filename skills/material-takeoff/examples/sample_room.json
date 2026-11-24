@@ -1,0 +1,13 @@
+{
+  "label": "SAMPLE hall bath (invented dimensions)",
+  "length_ft": 8,
+  "width_ft": 5,
+  "height_ft": 8,
+  "doors": [{"width_ft": 2.5, "height_ft": 6.67}],
+  "windows": [{"width_ft": 2, "height_ft": 3}],
+  "drywall": {"include_ceiling": true, "sheet": "4x8"},
+  "tile": {"tile_in": [12, 24], "pattern": "straight", "tiles_per_box": 8},
+  "paint": {"coats": 2, "include_ceiling": true},
+  "trim": {"stick_ft": 16},
+  "sample_unit_prices": {"sheet": 15.00, "box": 48.00, "gallon": 38.00, "stick": 22.00}
+}
